@@ -15,7 +15,7 @@ RUN apt-get update --fix-missing && apt-get install -y wget bzip2 ca-certificate
     libglib2.0-0 libxext6 libsm6 libxrender1 \
     git mercurial subversion
 
-RUN echo 'export PATH=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
+RUN echo 'export PATH2=/opt/conda/bin:$PATH' > /etc/profile.d/conda.sh && \
     wget --quiet https://repo.continuum.io/archive/Anaconda3-4.1.1-Linux-x86_64.sh -O ~/anaconda.sh && \
     /bin/bash ~/anaconda.sh -b -p /opt/conda && \
     rm ~/anaconda.sh
@@ -35,12 +35,13 @@ ENV PATH /opt/conda/bin:$PATH
 WORKDIR /tmp
 RUN git clone https://github.com/notablemind/jupyter-nodejs.git
 RUN mkdir -p ~/.ipython/kernels/nodejs/
-RUN cd jupyter-nodejs && npm install && node install.js
-RUN cd jupyter-nodejs && make
+WORKDIR /tmp/jupyter-nodejs
+RUN npm install && node install.js
+RUN make
 RUN jupyter console --kernel nodejs
 
 # install webppl
-RUN npm install -g webppl
+RUN npm install webppl --save
 
 RUN mkdir /notebooks
 VOLUME /notebooks
